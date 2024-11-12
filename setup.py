@@ -19,14 +19,14 @@ from setuptools import setup, Command, find_namespace_packages
 # ------------------------------------------------------------------------------
 #
 base     = 'utils'
-name     = 'radical.###lname###'
+name     = 'radical.xgfabric'
 mod_root = 'src/radical/%s/' % base
 
 scripts  = list(glob('bin/*'))
 root     = os.path.dirname(__file__) or '.'
 readme   = open('%s/README.md' % root, encoding='utf-8').read()
-descr    = '###TODO: add short project description here###'
-keywords = ['radical', 'cybertools', '###TODO: add keywords here###']
+descr    = 'xGFabric project'
+keywords = ['radical', 'cybertools', 'sensors', 'edge', 'iot']
 
 share    = 'share/%s' % name
 data     = [('%s/examples'      % share, glob('examples/*.{py,cfg,json,sh}')),
