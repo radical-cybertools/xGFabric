@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+import radical.###lname###
+
+print  "version: %s" % radical.###lname###.version
+print  "details: %s" % radical.###lname###.version_detail
+
