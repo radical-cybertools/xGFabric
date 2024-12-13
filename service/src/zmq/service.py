@@ -42,7 +42,7 @@ class Client(ru.TypedDict):
     _defaults = {
         'uid'    : None,
         't_reg'  : None,
-        'urls'   : None,
+        'data'   : None,
         'session': None,
         'pmgr'   : None,
         'tmgr'   : None,
@@ -98,8 +98,8 @@ class xGFabric_EP(ru.zmq.Server):
         pmgr    = rp.PilotManager(session=session)
 
         pd = rp.PilotDescription()
-        pd.resource = 'local.localhost'
-        pd.nodes    =  1
+        pd.resource = 'xgfabric.vslurm'
+        pd.cores    = 8
         pd.runtime  = 600
 
 
@@ -130,7 +130,7 @@ class xGFabric_EP(ru.zmq.Server):
         client.data = data
         td = rp.TaskDescription()
         td.executable = '/bin/echo'
-        td.arguments  = ['DATA:', url]
+        td.arguments  = ['DATA:', data]
         tds.append(td)
 
         tasks = tmgr.submit_tasks(tds)
