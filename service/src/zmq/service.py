@@ -68,6 +68,14 @@ class xGFabric_EP(ru.zmq.Server):
 
     # --------------------------------------------------------------------------
     #
+    def start(self):
+
+        super().start()
+        print(self.addr)
+
+
+    # --------------------------------------------------------------------------
+    #
     def get_clients(self, uid:str) -> Client:
 
         assert uid in self._clients, 'unknown client [%s]' % uid
