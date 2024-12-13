@@ -31,7 +31,7 @@ class Client(ru.TypedDict):
     _schema = {
         'uid'    : str,              # client uid
         't_reg'  : float,            # registration time
-        'urls'   : [str],            # urls to register
+        'data'   : str,              # fake input data
 
         'session': rp.Session,       # RP session etc.
         'pmgr'   : rp.PilotManager,
@@ -42,7 +42,7 @@ class Client(ru.TypedDict):
     _defaults = {
         'uid'    : None,
         't_reg'  : None,
-        'urls'   : list(),
+        'urls'   : None,
         'session': None,
         'pmgr'   : None,
         'tmgr'   : None,
@@ -119,20 +119,19 @@ class xGFabric_EP(ru.zmq.Server):
 
     # --------------------------------------------------------------------------
     #
-    def register_data(self, uid:str, urls: List[str]) -> str:
+    def register_data(self, uid:str, data: str) -> str:
 
         client = self.get_clients(uid)
         tmgr   = client.tmgr
 
-        self._log.info('client %s registered %s', uid, urls)
+        self._log.info('client %s registered %s', uid, len(data))
 
         tds = list()
-        for url in urls:
-            client.urls.append(url)
-            td = rp.TaskDescription()
-            td.executable = '/bin/echo'
-            td.arguments  = ['hello', url]
-            tds.append(td)
+        client.data = data
+        td = rp.TaskDescription()
+        td.executable = '/bin/echo'
+        td.arguments  = ['DATA:', url]
+        tds.append(td)
 
         tasks = tmgr.submit_tasks(tds)
         tmgr.wait_tasks()
@@ -150,7 +149,7 @@ class xGFabric_EP(ru.zmq.Server):
 #
 if __name__ == '__main__':
 
-    s = xGFabric_EP(url='tcp://*:10000')
+    s = xGFabric_EP(url='tcp://*:10000-10020')
     s.start()
     s.wait()
 
