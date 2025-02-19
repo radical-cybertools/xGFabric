@@ -4,7 +4,7 @@ import radical.pilot as rp
 
 # ------------------------------------------------------------------------------
 #
-class Controller(object):
+class PilotController(object):
 
     # --------------------------------------------------------------------------
     #
@@ -15,22 +15,23 @@ class Controller(object):
 
     # --------------------------------------------------------------------------
     #
-    def get_initial_pilot(self):
+    def get_initial_pilot_description(self):
 
       # if resources_are_cheap:
         if True:
             pd = rp.PilotDescription()
-            pd.nodes = 1
-            ...
+            pd.resource = 'xgfabric.vslurm'
+            pd.nodes    = 1
+            pd.runtime  = 600
 
             return pd
 
 
     # --------------------------------------------------------------------------
     #
-    def get_pilot_description(self, data):
+    def get_pilot_description(self, data=None):
 
-        if len(data) > 1000:
+        if data and len(data) > 1000:
 
             pd = rp.PilotDescription()
             pd.nodes = 8

@@ -23,7 +23,7 @@ import time
 import radical.utils as ru
 import radical.pilot as rp
 
-from .controller import Controller
+from .controller import PilotController
 
 
 # ------------------------------------------------------------------------------
@@ -62,12 +62,12 @@ class xGFabric_EP(ru.zmq.Server):
 
         super().__init__(url)
 
-        self._controller = Controller()
+        self._p_ctrl = PilotController()
 
         self._clients = dict()
 
-        self.register_request('register',      self.register)
-        self.register_request('register_data', self.register_data)
+        self.register_request('register',       self.register)
+        self.register_request('register_fname', self.register_fname)
 
 
     # --------------------------------------------------------------------------
@@ -101,14 +101,9 @@ class xGFabric_EP(ru.zmq.Server):
         tmgr    = rp.TaskManager(session=session)
         pmgr    = rp.PilotManager(session=session)
 
-        pd = self._controller.get_initial_pd(...)
+        pd = self._p_ctrl.get_initial_pilot_description()
 
         if pd:
-          # pd = rp.PilotDescription()
-          # pd.resource = 'xgfabric.vslurm'
-          # pd.cores    = 8
-          # pd.runtime  = 600
-
             pilot = pmgr.submit_pilots(pd)
             tmgr.add_pilots(pilot)
 
@@ -125,14 +120,18 @@ class xGFabric_EP(ru.zmq.Server):
 
     # --------------------------------------------------------------------------
     #
-    def register_data(self, uid:str, data: str) -> str:
+    def register_fname(self, uid:str, fname: str) -> str:
 
         client = self.get_clients(uid)
-        tmgr   = client.tmgr
+
+        with open(fname) as fin:
+            data = fin.read()
+
+        tmgr = client.tmgr
 
         self._log.info('client %s registered %s', uid, len(data))
 
-        pd = self._controller.get_pd(data, ...)
+        pd = self._p_ctrl.get_pilot_description(data)
 
         if pd:
             pilot = self._pmgr.submit_pilots(pd)
