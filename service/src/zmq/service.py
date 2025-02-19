@@ -23,6 +23,8 @@ import time
 import radical.utils as ru
 import radical.pilot as rp
 
+from .controller import Controller
+
 
 # ------------------------------------------------------------------------------
 #
@@ -59,6 +61,8 @@ class xGFabric_EP(ru.zmq.Server):
     def __init__(self, url: str):
 
         super().__init__(url)
+
+        self._controller = Controller()
 
         self._clients = dict()
 
@@ -97,14 +101,16 @@ class xGFabric_EP(ru.zmq.Server):
         tmgr    = rp.TaskManager(session=session)
         pmgr    = rp.PilotManager(session=session)
 
-        pd = rp.PilotDescription()
-        pd.resource = 'xgfabric.vslurm'
-        pd.cores    = 8
-        pd.runtime  = 600
+        pd = self._controller.get_initial_pd(...)
 
+        if pd:
+          # pd = rp.PilotDescription()
+          # pd.resource = 'xgfabric.vslurm'
+          # pd.cores    = 8
+          # pd.runtime  = 600
 
-        pilot = pmgr.submit_pilots(pd)
-        tmgr.add_pilots(pilot)
+            pilot = pmgr.submit_pilots(pd)
+            tmgr.add_pilots(pilot)
 
         client.session = session
         client.pmgr    = pmgr
@@ -125,6 +131,12 @@ class xGFabric_EP(ru.zmq.Server):
         tmgr   = client.tmgr
 
         self._log.info('client %s registered %s', uid, len(data))
+
+        pd = self._controller.get_pd(data, ...)
+
+        if pd:
+            pilot = self._pmgr.submit_pilots(pd)
+            tmgr.add_pilots(pilot)
 
         tds = list()
         client.data = data
