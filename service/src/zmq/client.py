@@ -19,7 +19,7 @@ if __name__ == '__main__':
     c = ru.zmq.Client(url=addr)
 
     if not uid:
-        uid = c.request('register')
+        uid = c.request('register_client')
         print('uid: %s' % uid)
 
     result = c.request('register_fname', uid=uid, fname=fname)
